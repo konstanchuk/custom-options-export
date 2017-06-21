@@ -1,0 +1,63 @@
+<?php
+
+/**
+ * Custom Options Export Extension for Magento 2
+ *
+ * @author     Volodymyr Konstanchuk http://konstanchuk.com
+ * @copyright  Copyright (c) 2017 The authors
+ * @license    http://www.opensource.org/licenses/mit-license.html  MIT License
+ */
+
+use Konstanchuk\CustomOptionsExport\Model\Export;
+
+?>
+<div style="border: 1px solid #adadad; display: inline-block; padding: 4px;">
+    <select name="custom_options_export_type"
+            id="customOptionsExportType"
+            class="admin__control-select">
+        <option value="<?php /* @escapeNotVerified */ echo Export::TYPE_XML ?>" selected>
+            <?php /* @escapeNotVerified */ echo __('export to xml'); ?>
+        </option>
+        <option value="<?php /* @escapeNotVerified */ echo Export::TYPE_CSV ?>">
+            <?php /* @escapeNotVerified */ echo __('export to csv'); ?>
+        </option>
+    </select>
+    <a href="<?php /* @escapeNotVerified */ echo $this->getUrl('custom_options_export/export/productForm', [
+        'product_id' => $this->getProduct()->getId(),
+    ]) ?>" id="customOptionsExportTypeLink">
+        <?php /* @escapeNotVerified */ echo __('run'); ?>
+    </a>
+</div>
+<script type="text/javascript">
+    require(['jquery'], function ($) {
+            function addParamsToUrl(params, url) {
+                if (!url) {
+                    url = window.location;
+                }
+                var parser = document.createElement('a');
+                parser.href = url;
+                var uri = parser.search;
+                $.each(params, function (key, value) {
+                    key = encodeURI(key);
+                    value = encodeURI(value);
+                    var re = new RegExp("([?&])" + key + "=.*?(&|$)", "i"),
+                        separator = uri.indexOf('?') !== -1 ? "&" : "?";
+                    if (uri.match(re)) {
+                        uri = uri.replace(re, '$1' + key + "=" + value + '$2');
+                    } else {
+                        uri += separator + key + "=" + value;
+                    }
+                });
+                parser.search = uri;
+                return parser;
+            }
+
+            var linkElem = $('#customOptionsExportTypeLink');
+            $('#customOptionsExportType').on('change', function () {
+                linkElem.attr('href', addParamsToUrl({
+                    'type': $(this).val()
+                }, linkElem.attr('href')));
+            });
+        }
+    );
+</script>
